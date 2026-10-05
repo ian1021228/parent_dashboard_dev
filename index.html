@@ -458,7 +458,7 @@
                   <p id="student-status-summary" class="text-xs text-slate-500 mt-0.5">點選下方標籤可快速篩選相關作業</p>
                   <div id="student-attendance-status-box" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <i class="fa-solid fa-user-check text-emerald-600"></i>
-                    <span id="student-attendance-status-text">今日出勤：正常出席</span>
+                    <span id="student-attendance-status-text">今日出席：正常出席</span>
                   </div>
                 </div>
               </div>
@@ -2729,15 +2729,15 @@
       if (attBox && attText) {
         if (!attRecord || attRecord.status === 'present') {
           attBox.className = "mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200";
-          attBox.innerHTML = `<i class="fa-solid fa-user-check text-emerald-600"></i> <span>今日出勤：正常出席</span>`;
+          attBox.innerHTML = `<i class="fa-solid fa-user-check text-emerald-600"></i> <span>今日出席：正常出席</span>`;
         } else if (attRecord.status === 'tardy') {
           attBox.className = "mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-amber-50 text-amber-800 border border-amber-200";
-          attBox.innerHTML = `<i class="fa-solid fa-clock text-amber-600"></i> <span>今日出勤：遲到到校 ${attRecord.time ? `(${attRecord.time})` : ''}</span>`;
+          attBox.innerHTML = `<i class="fa-solid fa-clock text-amber-600"></i> <span>今日出席：遲到到校 ${attRecord.time ? `(${attRecord.time})` : ''}</span>`;
         } else {
           const reasonMap = { sick: '病假', personal: '事假', official: '公假' };
           const label = reasonMap[attRecord.status] || attRecord.status;
           attBox.className = "mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-rose-50 text-rose-700 border border-rose-200";
-          attBox.innerHTML = `<i class="fa-solid fa-notes-medical text-rose-600"></i> <span>今日出勤：請假 (${label})</span>`;
+          attBox.innerHTML = `<i class="fa-solid fa-notes-medical text-rose-600"></i> <span>今日出席：請假 (${label})</span>`;
         }
       }
 
