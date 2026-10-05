@@ -4433,7 +4433,7 @@
       signSection.classList.remove("hidden");
 
       const signatures = data?.contactSignatures?.[dateStr] || {};
-      const studentSig = signatures[seat];
+      const studentSig = signatures[seat] || state.cloudStudentData?.contactSignatures?.[dateStr];
 
       const statusBadge = document.getElementById("parent-sign-status-badge");
       const signedBox = document.getElementById("parent-signed-box");
@@ -4525,23 +4525,39 @@
       }
 
       try {
-        const parentDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'parentClasses', state.accessCode);
-        const existingSignatures = state.classData?.contactSignatures || {};
-        existingSignatures[activeDate] = existingSignatures[activeDate] || {};
-        existingSignatures[activeDate][seat] = {
+        const studentDocId = `studentScores_${state.accessCode}_seat${seat}`;
+        const profileDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'userProfiles', studentDocId);
+
+        const curSignatures = (state.cloudStudentData && state.cloudStudentData.contactSignatures) || {};
+        curSignatures[activeDate] = {
           signatureDataUrl: signDataUrl,
           signedAt: new Date().toISOString()
         };
 
-        await setDoc(parentDocRef, {
-          contactSignatures: existingSignatures,
+        await setDoc(profileDocRef, {
+          classCode: state.accessCode,
+          seat: Number(seat),
+          contactSignatures: curSignatures,
           updatedAt: new Date().toISOString()
         }, { merge: true });
 
+        if (!state.cloudStudentData) state.cloudStudentData = {};
+        state.cloudStudentData.contactSignatures = curSignatures;
+
+        if (!state.classData) state.classData = {};
+        if (!state.classData.contactSignatures) state.classData.contactSignatures = {};
+        if (!state.classData.contactSignatures[activeDate]) state.classData.contactSignatures[activeDate] = {};
+        state.classData.contactSignatures[activeDate][seat] = curSignatures[activeDate];
+
+        try {
+          const parentDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'parentClasses', state.accessCode);
+          await setDoc(parentDocRef, {
+            contactSignatures: state.classData.contactSignatures,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (ignored) {}
+
         alert("今日聯絡簿電子簽閱成功！");
-        if (state.classData) {
-          state.classData.contactSignatures = existingSignatures;
-        }
         renderParentSignatureBox(state.classData, activeDate);
       } catch (err) {
         console.error("Signature save error:", err);
@@ -4642,7 +4658,7 @@
       }
 
       container.innerHTML = affairs.map(item => {
-        const itemResp = responses[item.id]?.[seat];
+        const itemResp = responses[item.id]?.[seat] || state.cloudStudentData?.affairResponses?.[item.id];
         const isSubmitted = Boolean(itemResp);
 
         if (isSubmitted) {
@@ -4789,25 +4805,41 @@
       }
 
       try {
-        const parentDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'parentClasses', state.accessCode);
-        const existingResponses = state.classData?.affairResponses || {};
-        existingResponses[affairItem.id] = existingResponses[affairItem.id] || {};
-        existingResponses[affairItem.id][seat] = {
+        const studentDocId = `studentScores_${state.accessCode}_seat${seat}`;
+        const profileDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'userProfiles', studentDocId);
+
+        const curResponses = (state.cloudStudentData && state.cloudStudentData.affairResponses) || {};
+        curResponses[affairItem.id] = {
           selectedOptions,
           opinion,
           signatureDataUrl: sigDataUrl,
           signedAt: new Date().toISOString()
         };
 
-        await setDoc(parentDocRef, {
-          affairResponses: existingResponses,
+        await setDoc(profileDocRef, {
+          classCode: state.accessCode,
+          seat: Number(seat),
+          affairResponses: curResponses,
           updatedAt: new Date().toISOString()
         }, { merge: true });
 
+        if (!state.cloudStudentData) state.cloudStudentData = {};
+        state.cloudStudentData.affairResponses = curResponses;
+
+        if (!state.classData) state.classData = {};
+        if (!state.classData.affairResponses) state.classData.affairResponses = {};
+        if (!state.classData.affairResponses[affairItem.id]) state.classData.affairResponses[affairItem.id] = {};
+        state.classData.affairResponses[affairItem.id][seat] = curResponses[affairItem.id];
+
+        try {
+          const parentDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'parentClasses', state.accessCode);
+          await setDoc(parentDocRef, {
+            affairResponses: state.classData.affairResponses,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (ignored) {}
+
         alert("問卷回條已成功送出！");
-        if (state.classData) {
-          state.classData.affairResponses = existingResponses;
-        }
         renderParentAffairsSection(state.classData);
       } catch (err) {
         console.error("Affair submit error:", err);
