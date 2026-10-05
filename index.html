@@ -418,6 +418,16 @@
           <i class="fa-solid fa-book-open text-teal-600"></i>
           <span>聯絡簿與心情</span>
         </button>
+
+        <button
+          type="button"
+          id="parent-tab-affairs-btn"
+          data-tab="affairs"
+          class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <i class="fa-solid fa-folder-open text-rose-500"></i>
+          <span>問卷回條</span>
+        </button>
       </nav>
 
       <!-- ============================================== -->
@@ -446,6 +456,10 @@
                     </button>
                   </div>
                   <p id="student-status-summary" class="text-xs text-slate-500 mt-0.5">點選下方標籤可快速篩選相關作業</p>
+                  <div id="student-attendance-status-box" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <i class="fa-solid fa-user-check text-emerald-600"></i>
+                    <span id="student-attendance-status-text">今日出勤：正常出席</span>
+                  </div>
                 </div>
               </div>
 
@@ -950,6 +964,86 @@
           </div>
         </section>
 
+        <!-- 家長每日電子簽閱區塊 (Daily Parent E-Signature) -->
+        <section id="contact-parent-sign-section" class="bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-200/80 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold border border-purple-100">
+                <i class="fa-solid fa-signature text-sm"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-black text-slate-900">家長每日聯絡簿電子簽閱</h3>
+                <p class="text-xs text-slate-400">當日查閱完畢後請於下方親筆手寫簽名送出</p>
+              </div>
+            </div>
+            <div id="parent-sign-status-badge">
+              <!-- 已簽閱或待簽閱狀態標籤 -->
+            </div>
+          </div>
+
+          <!-- 已完成簽閱狀態展示區塊 -->
+          <div id="parent-signed-box" class="hidden p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center space-y-2">
+            <div class="flex items-center justify-center gap-2 text-emerald-700 font-black text-sm">
+              <i class="fa-solid fa-circle-check text-emerald-500"></i>
+              <span>今日聯絡簿已完成電子簽閱！</span>
+            </div>
+            <div class="flex items-center justify-center">
+              <img id="parent-signed-img-preview" src="" class="h-14 max-w-[200px] border border-emerald-300 rounded-xl bg-white p-1 shadow-2xs" alt="家長簽名">
+            </div>
+            <p id="parent-signed-time-text" class="text-xs text-emerald-600 font-mono font-medium"></p>
+          </div>
+
+          <!-- 未簽閱表單與手寫畫布區塊 -->
+          <div id="parent-unsign-form-box" class="space-y-4">
+            <!-- 密碼快速驗證（記住密碼免重複輸入） -->
+            <div id="parent-sign-pin-container" class="space-y-2">
+              <label for="parent-sign-pin-input" class="block text-xs font-black text-slate-700">
+                <i class="fa-solid fa-lock text-indigo-500 mr-1"></i> 家長/學生驗證密碼 *
+              </label>
+              <div class="relative">
+                <input 
+                  type="password" 
+                  id="parent-sign-pin-input" 
+                  placeholder="請輸入密碼（預設為班級代碼+座號）" 
+                  class="w-full py-2.5 px-3.5 rounded-xl border border-slate-300 text-sm font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                />
+              </div>
+              <div class="flex items-center gap-2 pt-1">
+                <input type="checkbox" id="parent-remember-pin-checkbox" checked class="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 cursor-pointer">
+                <label for="parent-remember-pin-checkbox" class="text-xs text-slate-500 font-bold cursor-pointer">記住密碼，日後簽名免重複輸入</label>
+              </div>
+            </div>
+
+            <!-- Canvas 手寫板 (只能手寫) -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-pen text-indigo-500"></i> 請於下方空白處親筆手寫簽名 *
+                </label>
+                <button type="button" id="clear-parent-sign-canvas-btn" class="text-xs text-slate-500 hover:text-rose-600 font-bold flex items-center gap-1 cursor-pointer">
+                  <i class="fa-solid fa-rotate-left"></i> 清除重寫
+                </button>
+              </div>
+              <div class="relative border-2 border-dashed border-slate-300 hover:border-purple-400 rounded-2xl bg-white overflow-hidden shadow-inner">
+                <canvas id="parent-signature-canvas" width="400" height="130" class="w-full h-32 touch-none cursor-crosshair block bg-white"></canvas>
+                <div id="canvas-placeholder-hint" class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-300 text-xs font-bold">
+                  請以手指或觸控筆在此手寫簽名
+                </div>
+              </div>
+            </div>
+
+            <!-- 送出簽章按鈕 -->
+            <button 
+              type="button" 
+              id="submit-parent-signature-btn" 
+              class="touch-target w-full flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-[0.99] text-white font-black text-sm shadow-md shadow-purple-500/25 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-signature"></i>
+              <span>確認簽閱並送出電子簽名</span>
+            </button>
+          </div>
+        </section>
+
         <!-- Mood Reflection Card in Contact Tab -->
         <div id="contact-tab-mood-display-box" class="hidden bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
           <div class="flex items-center gap-2.5 mb-2">
@@ -966,6 +1060,27 @@
           </div>
           <p id="contact-tab-mood-text" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium bg-slate-50 p-4 rounded-2xl border border-slate-100"></p>
         </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 5: CLASS AFFAIRS & NOTICE SLIPS PANEL       -->
+      <!-- ============================================== -->
+      <div id="panel-parent-affairs" class="space-y-6 hidden">
+        <section class="bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-200/80">
+          <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-5">
+            <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold border border-rose-100">
+              <i class="fa-solid fa-folder-open text-sm"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">班級事務與問卷回條</h2>
+              <p class="text-xs text-slate-400">校園通知單、家長意願調查與電子回簽</p>
+            </div>
+          </div>
+
+          <div id="parent-affairs-list-box" class="space-y-4">
+            <!-- 動態渲染各回條項目 -->
+          </div>
+        </section>
       </div>
 
     </main>
@@ -1108,7 +1223,7 @@
 
         <!-- 5. Version & Sync Info -->
         <div class="pt-4 border-t border-slate-100 text-center text-xs text-slate-400 space-y-1">
-          <p>系統版本：v2.1 (家長端即時查詢版)</p>
+          <p>系統版本：v3.6 (家長端即時查詢與電子簽章版)</p>
           <p>最後同步時間：<span id="modal-last-synced-time" class="font-mono text-slate-600">--</span></p>
           <div class="pt-2 flex justify-center">
             <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200/80 text-indigo-900 text-xs font-bold">
@@ -1604,10 +1719,12 @@
       parentTabScoresBtn: document.getElementById("parent-tab-scores-btn"),
       parentTabClassBtn: document.getElementById("parent-tab-class-btn"),
       parentTabContactBtn: document.getElementById("parent-tab-contact-btn"),
+      parentTabAffairsBtn: document.getElementById("parent-tab-affairs-btn"),
       panelParentHw: document.getElementById("panel-parent-hw"),
       panelParentScores: document.getElementById("panel-parent-scores"),
       panelParentClass: document.getElementById("panel-parent-class"),
       panelParentContact: document.getElementById("panel-parent-contact"),
+      panelParentAffairs: document.getElementById("panel-parent-affairs"),
 
       // Student Scores Preview & Quick Link
       studentScoresSection: document.getElementById("student-scores-section"),
@@ -2603,6 +2720,26 @@
       elements.statCorrectionCount.textContent = correctionCount;
       elements.statMissingCount.textContent = missingCount;
       elements.personalHwCountBadge.textContent = `共 ${homeworks.length} 項`;
+
+      // Update Attendance Badge
+      const todayDateStr = getTodayDateString();
+      const attRecord = data.attendance?.[todayDateStr]?.[state.studentSeat];
+      const attBox = document.getElementById("student-attendance-status-box");
+      const attText = document.getElementById("student-attendance-status-text");
+      if (attBox && attText) {
+        if (!attRecord || attRecord.status === 'present') {
+          attBox.className = "mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200";
+          attBox.innerHTML = `<i class="fa-solid fa-user-check text-emerald-600"></i> <span>今日出勤：正常出席</span>`;
+        } else if (attRecord.status === 'tardy') {
+          attBox.className = "mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-amber-50 text-amber-800 border border-amber-200";
+          attBox.innerHTML = `<i class="fa-solid fa-clock text-amber-600"></i> <span>今日出勤：遲到到校 ${attRecord.time ? `(${attRecord.time})` : ''}</span>`;
+        } else {
+          const reasonMap = { sick: '病假', personal: '事假', official: '公假' };
+          const label = reasonMap[attRecord.status] || attRecord.status;
+          attBox.className = "mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-rose-50 text-rose-700 border border-rose-200";
+          attBox.innerHTML = `<i class="fa-solid fa-notes-medical text-rose-600"></i> <span>今日出勤：請假 (${label})</span>`;
+        }
+      }
 
       // Render Uncompleted Highlight Box
       if (uncompletedItems.length === 0) {
@@ -3991,7 +4128,8 @@
         { id: "hw", btn: elements.parentTabHwBtn, panel: elements.panelParentHw },
         { id: "scores", btn: elements.parentTabScoresBtn, panel: elements.panelParentScores },
         { id: "class", btn: elements.parentTabClassBtn, panel: elements.panelParentClass },
-        { id: "contact", btn: elements.parentTabContactBtn, panel: elements.panelParentContact }
+        { id: "contact", btn: elements.parentTabContactBtn, panel: elements.panelParentContact },
+        { id: "affairs", btn: elements.parentTabAffairsBtn, panel: elements.panelParentAffairs }
       ];
 
       tabs.forEach(t => {
@@ -4017,6 +4155,8 @@
         renderParentScoresSection();
       } else if (tabId === "contact") {
         renderContactTabMood();
+      } else if (tabId === "affairs") {
+        renderParentAffairsSection(state.classData);
       }
     }
 
@@ -4205,6 +4345,478 @@
             `).join('')}
           </ol>
         `;
+      }
+
+      // 渲染每日聯絡簿家長電子簽閱區塊
+      renderParentSignatureBox(data, activeDateStr);
+    }
+
+    // ==========================================
+    // MODULE 2.5: 家長聯絡簿電子簽閱 (手寫 Canvas & 密碼記憶)
+    // ==========================================
+
+    let isDrawingSign = false;
+    let hasSignedOnCanvas = false;
+    let signCanvas = null;
+    let signCtx = null;
+
+    function initSignatureCanvas() {
+      signCanvas = document.getElementById("parent-signature-canvas");
+      if (!signCanvas) return;
+      signCtx = signCanvas.getContext("2d");
+      signCtx.lineWidth = 2.5;
+      signCtx.lineCap = "round";
+      signCtx.lineJoin = "round";
+      signCtx.strokeStyle = "#1e293b";
+
+      function getPos(e) {
+        const rect = signCanvas.getBoundingClientRect();
+        const scaleX = signCanvas.width / rect.width;
+        const scaleY = signCanvas.height / rect.height;
+        return {
+          x: (e.clientX - rect.left) * scaleX,
+          y: (e.clientY - rect.top) * scaleY
+        };
+      }
+
+      function start(e) {
+        isDrawingSign = true;
+        hasSignedOnCanvas = true;
+        document.getElementById("canvas-placeholder-hint")?.classList.add("hidden");
+        const pos = getPos(e);
+        signCtx.beginPath();
+        signCtx.moveTo(pos.x, pos.y);
+      }
+
+      function draw(e) {
+        if (!isDrawingSign) return;
+        const pos = getPos(e);
+        signCtx.lineTo(pos.x, pos.y);
+        signCtx.stroke();
+      }
+
+      function stop() {
+        isDrawingSign = false;
+      }
+
+      signCanvas.onpointerdown = start;
+      signCanvas.onpointermove = draw;
+      signCanvas.onpointerup = stop;
+      signCanvas.onpointercancel = stop;
+
+      const clearBtn = document.getElementById("clear-parent-sign-canvas-btn");
+      if (clearBtn) {
+        clearBtn.onclick = () => {
+          if (signCtx && signCanvas) {
+            signCtx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+            hasSignedOnCanvas = false;
+            document.getElementById("canvas-placeholder-hint")?.classList.remove("hidden");
+          }
+        };
+      }
+
+      const submitBtn = document.getElementById("submit-parent-signature-btn");
+      if (submitBtn) {
+        submitBtn.onclick = submitParentDailySignature;
+      }
+    }
+
+    function renderParentSignatureBox(data, dateStr = state.selectedContactDate || getTodayDateString()) {
+      const signSection = document.getElementById("contact-parent-sign-section");
+      if (!signSection) return;
+
+      const seat = state.studentSeat;
+      if (!seat) {
+        signSection.classList.add("hidden");
+        return;
+      }
+      signSection.classList.remove("hidden");
+
+      const signatures = data?.contactSignatures?.[dateStr] || {};
+      const studentSig = signatures[seat];
+
+      const statusBadge = document.getElementById("parent-sign-status-badge");
+      const signedBox = document.getElementById("parent-signed-box");
+      const unsignFormBox = document.getElementById("parent-unsign-form-box");
+      const signedImg = document.getElementById("parent-signed-img-preview");
+      const signedTime = document.getElementById("parent-signed-time-text");
+      const pinInput = document.getElementById("parent-sign-pin-input");
+      const pinContainer = document.getElementById("parent-sign-pin-container");
+
+      // 自動填入已儲存之密碼
+      const rememberedPin = localStorage.getItem(`parent_pass_${state.accessCode}_seat${seat}`);
+      if (rememberedPin && pinInput) {
+        pinInput.value = rememberedPin;
+      }
+
+      if (isSeatUnlocked(seat) && pinContainer) {
+        pinContainer.classList.add("hidden");
+      } else if (pinContainer) {
+        pinContainer.classList.remove("hidden");
+      }
+
+      if (studentSig) {
+        // 今日已完成簽署
+        if (statusBadge) {
+          statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 font-black text-xs inline-flex items-center gap-1"><i class="fa-solid fa-circle-check text-emerald-600"></i> 本日已完成簽閱</span>`;
+        }
+        signedBox?.classList.remove("hidden");
+        unsignFormBox?.classList.add("hidden");
+        if (signedImg) signedImg.src = studentSig.signatureDataUrl || "";
+        if (signedTime) signedTime.textContent = `簽署時間：${studentSig.signedAt ? studentSig.signedAt.slice(0, 16).replace('T', ' ') : ''}`;
+      } else {
+        // 尚未簽署
+        if (statusBadge) {
+          statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-xl bg-amber-100 text-amber-800 font-black text-xs inline-flex items-center gap-1"><i class="fa-solid fa-circle-exclamation text-amber-600"></i> 待電子簽閱</span>`;
+        }
+        signedBox?.classList.add("hidden");
+        unsignFormBox?.classList.remove("hidden");
+        initSignatureCanvas();
+      }
+    }
+
+    async function submitParentDailySignature() {
+      if (!state.accessCode || !state.studentSeat) {
+        alert("請先綁定學生座號！");
+        return;
+      }
+
+      if (!hasSignedOnCanvas) {
+        alert("請先於下方空白處親筆手寫簽名！");
+        return;
+      }
+
+      const seat = state.studentSeat;
+      const pinInput = document.getElementById("parent-sign-pin-input");
+      const rememberCheckbox = document.getElementById("parent-remember-pin-checkbox");
+      const teacherPin = getTeacherConfiguredPin(seat);
+      const rememberedPin = localStorage.getItem(`parent_pass_${state.accessCode}_seat${seat}`);
+
+      let enteredPin = pinInput ? pinInput.value.trim().toUpperCase() : '';
+      if (!enteredPin && rememberedPin) {
+        enteredPin = rememberedPin;
+      }
+
+      if (!isSeatUnlocked(seat)) {
+        if (!enteredPin) {
+          alert("請輸入家長/學生驗證密碼！");
+          pinInput?.focus();
+          return;
+        }
+        if (teacherPin && enteredPin !== teacherPin) {
+          alert("驗證密碼不正確，請重新輸入！");
+          pinInput?.focus();
+          return;
+        }
+        unlockSeat(seat, enteredPin);
+      }
+
+      if (rememberCheckbox?.checked && enteredPin) {
+        localStorage.setItem(`parent_pass_${state.accessCode}_seat${seat}`, enteredPin);
+      }
+
+      const signDataUrl = signCanvas.toDataURL("image/png");
+      const activeDate = state.selectedContactDate || getTodayDateString();
+
+      const submitBtn = document.getElementById("submit-parent-signature-btn");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 正在儲存簽名...`;
+      }
+
+      try {
+        const parentDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'parentClasses', state.accessCode);
+        const existingSignatures = state.classData?.contactSignatures || {};
+        existingSignatures[activeDate] = existingSignatures[activeDate] || {};
+        existingSignatures[activeDate][seat] = {
+          signatureDataUrl: signDataUrl,
+          signedAt: new Date().toISOString()
+        };
+
+        await setDoc(parentDocRef, {
+          contactSignatures: existingSignatures,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+
+        alert("今日聯絡簿電子簽閱成功！");
+        if (state.classData) {
+          state.classData.contactSignatures = existingSignatures;
+        }
+        renderParentSignatureBox(state.classData, activeDate);
+      } catch (err) {
+        console.error("Signature save error:", err);
+        alert("簽署失敗，請檢查網路連線：" + err.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<i class="fa-solid fa-signature"></i> 確認簽閱並送出電子簽名`;
+        }
+      }
+    }
+
+    // ==========================================
+    // MODULE 2.8: 班級事務與問卷回條
+    // ==========================================
+
+    const affairCanvases = {};
+
+    function initAffairCanvas(affairId) {
+      setTimeout(() => {
+        const canvas = document.getElementById(`affair-canvas-${affairId}`);
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = "#1e293b";
+
+        affairCanvases[affairId] = { canvas, ctx, hasDrawn: false };
+
+        function getPos(e) {
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = canvas.width / rect.width;
+          const scaleY = canvas.height / rect.height;
+          return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+          };
+        }
+
+        let isDrawing = false;
+        canvas.onpointerdown = (e) => {
+          isDrawing = true;
+          affairCanvases[affairId].hasDrawn = true;
+          document.getElementById(`affair-canvas-hint-${affairId}`)?.classList.add("hidden");
+          const pos = getPos(e);
+          ctx.beginPath();
+          ctx.moveTo(pos.x, pos.y);
+        };
+        canvas.onpointermove = (e) => {
+          if (!isDrawing) return;
+          const pos = getPos(e);
+          ctx.lineTo(pos.x, pos.y);
+          ctx.stroke();
+        };
+        canvas.onpointerup = () => { isDrawing = false; };
+        canvas.onpointercancel = () => { isDrawing = false; };
+
+        const clearBtn = document.querySelector(`.clear-affair-canvas-btn[data-id="${affairId}"]`);
+        if (clearBtn) {
+          clearBtn.onclick = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            affairCanvases[affairId].hasDrawn = false;
+            document.getElementById(`affair-canvas-hint-${affairId}`)?.classList.remove("hidden");
+          };
+        }
+      }, 50);
+    }
+
+    function renderParentAffairsSection(data) {
+      const container = document.getElementById("parent-affairs-list-box");
+      if (!container) return;
+
+      const affairs = data?.affairs || [];
+      const responses = data?.affairResponses || {};
+      const seat = state.studentSeat;
+
+      if (!seat) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400">
+            <i class="fa-solid fa-user-lock text-3xl mb-2 text-slate-300 block"></i>
+            <p class="font-bold text-slate-600 text-sm">請先在上方綁定學生座號</p>
+            <p class="text-xs text-slate-400 mt-1">綁定座號後即可線上填寫並簽署班級回條</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (affairs.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400">
+            <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300 block"></i>
+            <p class="font-bold text-slate-600 text-sm">目前尚無待填寫之班級問卷或通知單</p>
+            <p class="text-xs text-slate-400 mt-1">若老師發布新回條，將第一時間同步於此</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = affairs.map(item => {
+        const itemResp = responses[item.id]?.[seat];
+        const isSubmitted = Boolean(itemResp);
+
+        if (isSubmitted) {
+          const chosenText = Array.isArray(itemResp.selectedOptions) 
+            ? itemResp.selectedOptions.join('、') 
+            : (itemResp.selectedOptions || '已送出');
+          return `
+            <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 text-emerald-800 font-black text-xs">
+                  <i class="fa-solid fa-circle-check text-emerald-600"></i> 此回條已完成繳回
+                </span>
+                <span class="text-xs text-slate-400 font-mono">${itemResp.signedAt ? itemResp.signedAt.slice(0, 16).replace('T', ' ') : ''}</span>
+              </div>
+              <h3 class="text-base font-black text-slate-900">${escapeHtml(item.title)}</h3>
+              <div class="text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200 space-y-1.5">
+                <div><strong>已選項目：</strong><span class="text-indigo-600 font-black">${escapeHtml(chosenText)}</span></div>
+                ${itemResp.opinion ? `<div><strong>家長意見：</strong><span>${escapeHtml(itemResp.opinion)}</span></div>` : ''}
+                ${itemResp.signatureDataUrl ? `
+                  <div class="flex items-center gap-2 pt-1">
+                    <strong>家長手寫簽章：</strong>
+                    <img src="${itemResp.signatureDataUrl}" class="h-8 border border-slate-200 rounded p-0.5 bg-white" alt="簽章">
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }
+
+        // 未填寫表單
+        const optionsHtml = (item.options || []).map((opt, oIdx) => {
+          const inputType = item.type === 'multiple' ? 'checkbox' : 'radio';
+          return `
+            <label class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 cursor-pointer transition-colors">
+              <input type="${inputType}" name="affair_opt_${item.id}" value="${escapeHtml(opt)}" class="w-4 h-4 text-rose-600 focus:ring-rose-500 rounded" ${oIdx === 0 && inputType === 'radio' ? 'checked' : ''}>
+              <span class="text-xs sm:text-sm font-bold text-slate-800">${escapeHtml(opt)}</span>
+            </label>
+          `;
+        }).join('');
+
+        return `
+          <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4" data-affair-id="${item.id}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="px-2.5 py-1 rounded-xl text-xs font-black bg-rose-50 text-rose-600 border border-rose-200">
+                <i class="fa-solid fa-clock mr-1"></i> 請填寫繳回
+              </span>
+              <span class="text-xs text-slate-400">截止：${item.deadline || '無期限'}</span>
+            </div>
+            <div>
+              <h3 class="text-base font-black text-slate-900">${escapeHtml(item.title)}</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">${escapeHtml(item.content || '')}</p>
+            </div>
+            
+            <!-- 選項 -->
+            <div class="space-y-2">
+              <div class="text-xs font-black text-slate-700">請選擇您的回覆意願：</div>
+              ${optionsHtml}
+            </div>
+
+            <!-- 意見反饋 -->
+            <div>
+              <label class="block text-xs font-black text-slate-700 mb-1">家長意見或備註（選填）</label>
+              <textarea class="affair-opinion-input w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium bg-slate-50 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:outline-none" rows="2" placeholder="若有特殊需求或備註請在此說明..."></textarea>
+            </div>
+
+            <!-- 手寫簽名 (如果要求手寫簽章) -->
+            ${item.requireSignature ? `
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xs font-black text-slate-700">請親筆手寫簽名 *</span>
+                  <button type="button" class="clear-affair-canvas-btn text-[11px] text-slate-400 hover:text-rose-600 font-bold cursor-pointer" data-id="${item.id}">清除重寫</button>
+                </div>
+                <div class="relative border border-slate-300 rounded-xl overflow-hidden bg-white">
+                  <canvas id="affair-canvas-${item.id}" width="400" height="110" class="w-full h-24 touch-none cursor-crosshair bg-white block"></canvas>
+                  <div id="affair-canvas-hint-${item.id}" class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-300 text-xs font-bold">請在此手寫簽名</div>
+                </div>
+              </div>
+            ` : ''}
+
+            <button 
+              type="button" 
+              class="submit-affair-btn w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              data-id="${item.id}"
+            >
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>送出問卷回條</span>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      // 綁定各回條的 Canvas 和送出按鈕
+      affairs.forEach(item => {
+        if (responses[item.id]?.[seat]) return;
+
+        if (item.requireSignature) {
+          initAffairCanvas(item.id);
+        }
+
+        const submitBtn = container.querySelector(`.submit-affair-btn[data-id="${item.id}"]`);
+        if (submitBtn) {
+          submitBtn.addEventListener('click', () => {
+            submitParentAffairResponse(item);
+          });
+        }
+      });
+    }
+
+    async function submitParentAffairResponse(affairItem) {
+      const seat = state.studentSeat;
+      if (!seat || !state.accessCode) {
+        alert("請先綁定學生座號！");
+        return;
+      }
+
+      const container = document.querySelector(`[data-affair-id="${affairItem.id}"]`);
+      if (!container) return;
+
+      // 收集選取項目
+      const checkedInputs = container.querySelectorAll(`input[name="affair_opt_${affairItem.id}"]:checked`);
+      const selectedOptions = Array.from(checkedInputs).map(i => i.value);
+
+      if (affairItem.options && affairItem.options.length > 0 && selectedOptions.length === 0) {
+        alert("請至少選擇一個回覆選項！");
+        return;
+      }
+
+      const opinion = container.querySelector(".affair-opinion-input")?.value?.trim() || "";
+
+      let sigDataUrl = "";
+      if (affairItem.requireSignature) {
+        const cObj = affairCanvases[affairItem.id];
+        if (!cObj || !cObj.hasDrawn) {
+          alert("此問卷回條需要家長手寫電子簽名，請於畫布處親筆簽名！");
+          return;
+        }
+        sigDataUrl = cObj.canvas.toDataURL("image/png");
+      }
+
+      const btn = container.querySelector(".submit-affair-btn");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 正在送出回條...`;
+      }
+
+      try {
+        const parentDocRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'parentClasses', state.accessCode);
+        const existingResponses = state.classData?.affairResponses || {};
+        existingResponses[affairItem.id] = existingResponses[affairItem.id] || {};
+        existingResponses[affairItem.id][seat] = {
+          selectedOptions,
+          opinion,
+          signatureDataUrl: sigDataUrl,
+          signedAt: new Date().toISOString()
+        };
+
+        await setDoc(parentDocRef, {
+          affairResponses: existingResponses,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+
+        alert("問卷回條已成功送出！");
+        if (state.classData) {
+          state.classData.affairResponses = existingResponses;
+        }
+        renderParentAffairsSection(state.classData);
+      } catch (err) {
+        console.error("Affair submit error:", err);
+        alert("送出失敗，請檢查網路連線：" + err.message);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> 送出問卷回條`;
+        }
       }
     }
 
@@ -4458,6 +5070,7 @@
       elements.parentTabScoresBtn?.addEventListener('click', () => switchParentTab('scores'));
       elements.parentTabClassBtn?.addEventListener('click', () => switchParentTab('class'));
       elements.parentTabContactBtn?.addEventListener('click', () => switchParentTab('contact'));
+      elements.parentTabAffairsBtn?.addEventListener('click', () => switchParentTab('affairs'));
 
       // Quick jump to scores tab button
       elements.quickJumpScoresTabBtn?.addEventListener('click', () => switchParentTab('scores'));

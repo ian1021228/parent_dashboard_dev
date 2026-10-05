@@ -1,7 +1,7 @@
 // ==========================================
 // PWA Service Worker - 家長端即時查核看板
 // ==========================================
-const CACHE_NAME = 'parent-dashboard-dev-v1.0.0';
+const CACHE_NAME = 'parent-dashboard-dev-v1.1.0';
 
 const PRECACHE_ASSETS = [
   './',
