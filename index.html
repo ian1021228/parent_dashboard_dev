@@ -2,7 +2,7 @@
 <html lang="zh-TW" class="h-full bg-slate-50">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>班級經營系統 — 家長端即時查詢儀表板 (測試版 DEV)</title>
   <meta name="description" content="班級經營系統家長端即時查詢儀表板 (測試版 DEV)，支援即時同步、學生個人作業進度、7天聯絡簿與班級作業總覽">
   <meta property="og:title" content="班級經營系統 — 家長端即時查詢儀表板 (測試版 DEV)">
@@ -57,12 +57,27 @@
   </script>
 
   <style>
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
     /* Custom utility styles */
     html {
       -webkit-tap-highlight-color: transparent;
+      padding-top: var(--sat);
+      padding-left: var(--sal);
+      padding-right: var(--sar);
     }
     body {
       font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      padding-bottom: calc(4.75rem + var(--sab));
+    }
+    input, textarea, select {
+      user-select: text;
     }
     .custom-scrollbar::-webkit-scrollbar {
       height: 6px;
@@ -91,6 +106,40 @@
     }
     .live-pulse {
       animation: livePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* 原生底抽屜 (Bottom Sheet Modal) 行動端樣式 */
+    @media (max-width: 640px) {
+      #settings-modal, #parent-score-modal, #matrix-modal, #modal-ios-pwa-guide, #modal-parent-score-bracket-analysis, #modal-parent-multi-subject-filter, .modal {
+        align-items: flex-end !important;
+        padding: 0 !important;
+      }
+      #settings-modal > div, #parent-score-modal > div, #matrix-modal > div, #modal-ios-pwa-guide > div, #modal-parent-score-bracket-analysis > div, #modal-parent-multi-subject-filter > div, .modal-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-top-left-radius: 2rem !important;
+        border-top-right-radius: 2rem !important;
+        padding-bottom: calc(1.75rem + var(--sab)) !important;
+        max-height: 88vh !important;
+        overflow-y: auto !important;
+        animation: parentSheetSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        position: relative;
+      }
+      #settings-modal > div::before, #parent-score-modal > div::before, #matrix-modal > div::before, #modal-ios-pwa-guide > div::before, #modal-parent-score-bracket-analysis > div::before, #modal-parent-multi-subject-filter > div::before {
+        content: '';
+        display: block;
+        width: 44px;
+        height: 5px;
+        background: #cbd5e1;
+        border-radius: 999px;
+        margin: 8px auto 14px auto;
+      }
+    }
+    @keyframes parentSheetSlideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
     }
   </style>
 </head>
@@ -376,7 +425,7 @@
       </section>
 
       <!-- Navigation Tabs for Parent Dashboard -->
-      <nav class="bg-slate-200/80 p-1.5 rounded-2xl flex items-center gap-1.5 shadow-inner" id="parent-main-tabs">
+      <nav class="bg-slate-200/80 p-1.5 rounded-2xl hidden sm:flex items-center gap-1.5 shadow-inner" id="parent-main-tabs">
         <button
           type="button"
           id="parent-tab-hw-btn"
@@ -1103,6 +1152,28 @@
         </div>
       </div>
     </footer>
+
+    <!-- 家長端手機原生 App 底部導航欄 (Mobile Bottom Tab Bar) -->
+    <nav id="parent-mobile-bottom-nav" class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-2xl sm:hidden flex pb-[env(safe-area-inset-bottom,0px)] select-none">
+      <div class="grid grid-cols-4 w-full h-16 items-center px-1">
+        <button id="parent-mobile-nav-hw" data-tab="hw" class="parent-mobile-tab-btn flex flex-col items-center justify-center gap-1 text-indigo-600 font-extrabold text-[11px] py-1 cursor-pointer transition-all active:scale-95" title="今日作業">
+          <i class="fa-solid fa-clipboard-list text-lg"></i>
+          <span>今日作業</span>
+        </button>
+        <button id="parent-mobile-nav-contact" data-tab="contact" class="parent-mobile-tab-btn flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-teal-600 font-extrabold text-[11px] py-1 cursor-pointer transition-all active:scale-95" title="聯絡簿">
+          <i class="fa-solid fa-book-open text-lg"></i>
+          <span>聯絡簿</span>
+        </button>
+        <button id="parent-mobile-nav-class" data-tab="class" class="parent-mobile-tab-btn flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-indigo-600 font-extrabold text-[11px] py-1 cursor-pointer transition-all active:scale-95" title="班級總覽">
+          <i class="fa-solid fa-school text-lg"></i>
+          <span>班級總覽</span>
+        </button>
+        <button id="parent-mobile-nav-affairs" data-tab="affairs" class="parent-mobile-tab-btn flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-rose-600 font-extrabold text-[11px] py-1 cursor-pointer transition-all active:scale-95" title="問卷回條">
+          <i class="fa-solid fa-folder-open text-lg"></i>
+          <span>問卷回條</span>
+        </button>
+      </div>
+    </nav>
   </div>
 
   <!-- ============================================================== -->
@@ -4120,6 +4191,18 @@
       elements.modalParentMultiSubjectFilter?.classList.add('hidden');
     }
 
+    function triggerHaptic(type = 'light') {
+      if (typeof window !== 'undefined' && 'navigator' in window && typeof navigator.vibrate === 'function') {
+        try {
+          if (type === 'light') navigator.vibrate(12);
+          else if (type === 'medium') navigator.vibrate(25);
+          else if (type === 'success') navigator.vibrate([15, 40, 20]);
+          else if (type === 'warning' || type === 'error') navigator.vibrate([30, 50, 30]);
+        } catch (e) {}
+      }
+    }
+    window.triggerHaptic = triggerHaptic;
+
     function switchParentTab(tabId) {
       if (tabId === "scores" && !ENABLE_SCORES_FEATURE) {
         tabId = "hw";
@@ -4150,6 +4233,25 @@
           }
         }
       });
+
+      // 更新手機端原生底部導航欄高亮
+      const mobileNavMap = {
+        'hw': 'parent-mobile-nav-hw',
+        'contact': 'parent-mobile-nav-contact',
+        'class': 'parent-mobile-nav-class',
+        'affairs': 'parent-mobile-nav-affairs'
+      };
+      document.querySelectorAll('.parent-mobile-tab-btn').forEach(btn => {
+        btn.classList.remove('text-indigo-600', 'text-teal-600', 'text-rose-600');
+        btn.classList.add('text-slate-400');
+      });
+      const activeMobileBtn = document.getElementById(mobileNavMap[tabId]);
+      if (activeMobileBtn) {
+        activeMobileBtn.classList.remove('text-slate-400');
+        if (tabId === 'contact') activeMobileBtn.classList.add('text-teal-600');
+        else if (tabId === 'affairs') activeMobileBtn.classList.add('text-rose-600');
+        else activeMobileBtn.classList.add('text-indigo-600');
+      }
 
       if (tabId === "scores") {
         renderParentScoresSection();
@@ -5098,11 +5200,29 @@
       }
 
       // Parent Navigation Tabs
-      elements.parentTabHwBtn?.addEventListener('click', () => switchParentTab('hw'));
-      elements.parentTabScoresBtn?.addEventListener('click', () => switchParentTab('scores'));
-      elements.parentTabClassBtn?.addEventListener('click', () => switchParentTab('class'));
-      elements.parentTabContactBtn?.addEventListener('click', () => switchParentTab('contact'));
-      elements.parentTabAffairsBtn?.addEventListener('click', () => switchParentTab('affairs'));
+      elements.parentTabHwBtn?.addEventListener('click', () => { triggerHaptic('light'); switchParentTab('hw'); });
+      elements.parentTabScoresBtn?.addEventListener('click', () => { triggerHaptic('light'); switchParentTab('scores'); });
+      elements.parentTabClassBtn?.addEventListener('click', () => { triggerHaptic('light'); switchParentTab('class'); });
+      elements.parentTabContactBtn?.addEventListener('click', () => { triggerHaptic('light'); switchParentTab('contact'); });
+      elements.parentTabAffairsBtn?.addEventListener('click', () => { triggerHaptic('light'); switchParentTab('affairs'); });
+
+      // Parent Mobile Bottom Nav Tabs
+      document.getElementById('parent-mobile-nav-hw')?.addEventListener('click', () => {
+        triggerHaptic('light');
+        switchParentTab('hw');
+      });
+      document.getElementById('parent-mobile-nav-contact')?.addEventListener('click', () => {
+        triggerHaptic('light');
+        switchParentTab('contact');
+      });
+      document.getElementById('parent-mobile-nav-class')?.addEventListener('click', () => {
+        triggerHaptic('light');
+        switchParentTab('class');
+      });
+      document.getElementById('parent-mobile-nav-affairs')?.addEventListener('click', () => {
+        triggerHaptic('light');
+        switchParentTab('affairs');
+      });
 
       // Quick jump to scores tab button
       elements.quickJumpScoresTabBtn?.addEventListener('click', () => switchParentTab('scores'));
@@ -5407,22 +5527,6 @@
     // Start App
     init();
   </script>
-
-  <!-- 測試環境全站常駐警示條 (DEV 置頂左下角橫幅) -->
-  <aside id="dev-persistent-alert-banner" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 pointer-events-auto transition-all duration-300" style="z-index: 999999 !important;" aria-label="測試環境提示">
-    <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white rounded-2xl p-3 sm:py-2.5 sm:px-4 shadow-2xl border-2 border-white/40 backdrop-blur-md flex items-center gap-2.5 sm:gap-3 max-w-[calc(100vw-1.5rem)] sm:max-w-md">
-      <span class="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0 text-sm shadow-2xs">
-        <i class="fa-solid fa-flask-vial"></i>
-      </span>
-      <div class="text-xs sm:text-[13px] leading-snug font-bold">
-        您目前正在測試版體驗最新功能（v3.6），本區資料獨立隔離。若要進行日常使用，請隨時點此
-        <a href="https://ian1021228.github.io/ian_homework_checker2.0_online_parent_dashboard/" class="inline-flex items-center gap-1 font-black text-amber-950 bg-white hover:bg-amber-50 px-2 py-0.5 rounded-lg shadow-xs text-xs transition-transform transform active:scale-95 ml-1">
-          <i class="fa-solid fa-arrow-left text-[10px]"></i>
-          【返回正式版】
-        </a>
-      </div>
-    </div>
-  </aside>
 
 </body>
 </html>
