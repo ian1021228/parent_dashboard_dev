@@ -75,18 +75,10 @@
 
 ---
 
-## 🚀 快速開始
+## 🌐 線上直接使用
 
-### 線上直接使用
-直接點擊造訪：[https://ian1021228.github.io/ian_homework_checker2.0_online_parent_dashboard/](https://ian1021228.github.io/ian_homework_checker2.0_online_parent_dashboard/)
-
-### 本地測試運行
-```bash
-git clone https://github.com/ian1021228/ian_homework_checker2.0_online_parent_dashboard.git
-cd ian_homework_checker2.0_online_parent_dashboard
-python3 -m http.server 3568
-# 開啟瀏覽器訪問 http://127.0.0.1:3568/
-```
+本看板為純網頁雲端應用程式，無須下載任何程式碼或安裝 App，家長可透過手機或電腦瀏覽器即時造訪：
+🔗 **家長端直達網址**：[https://ian1021228.github.io/parent_dashboard_dev/](https://ian1021228.github.io/parent_dashboard_dev/)
 
 ---
 
