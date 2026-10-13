@@ -301,6 +301,25 @@
         <button id="sync-retry-btn" class="px-3 py-1 rounded-xl bg-amber-200/80 hover:bg-amber-300 font-bold text-xs text-amber-900">重新整理</button>
       </div>
 
+      <!-- 全校即時重大安全廣播通報條 (Emergency School Broadcast Banner) -->
+      <div id="parent-broadcast-banner" class="hidden rounded-2xl p-3.5 sm:p-4 border shadow-sm transition-all animate-fade-in flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 overflow-hidden">
+          <div id="parent-broadcast-icon-box" class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-base shadow-xs bg-indigo-100 text-indigo-600">
+            <i id="parent-broadcast-icon" class="fa-solid fa-bullhorn"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span id="parent-broadcast-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-200/80 text-indigo-800">校園安全即時通報</span>
+              <span id="parent-broadcast-time" class="text-[11px] opacity-75 font-mono"></span>
+            </div>
+            <p id="parent-broadcast-content" class="text-xs sm:text-sm font-bold truncate mt-0.5 leading-snug"></p>
+          </div>
+        </div>
+        <button id="parent-broadcast-close-btn" class="text-xs opacity-60 hover:opacity-100 p-1.5 rounded-lg shrink-0 cursor-pointer" title="關閉提示">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
       <!-- 每日摘要一覽卡片（今日親師速報） -->
       <section id="daily-bulletin-card" class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-indigo-800/50 relative overflow-hidden transition-all">
         <!-- Background subtle lighting effects -->
@@ -609,7 +628,7 @@
             </div>
             <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">請輸入專屬查核驗證碼 (PIN)</h2>
             <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-2 mb-6 leading-relaxed">
-              為保護學生個人各項隱私，查看前需輸入專屬 6 位數 PIN 碼（預設為 <strong>100000 + 座號</strong>，亦可洽詢導師）。
+              為保護學生個人各項隱私，查看前需輸入學校派發或導師提供之專屬 PIN 碼（若有疑問亦可洽詢導師）。
             </p>
 
             <form id="parent-pin-form" class="max-w-xs mx-auto space-y-4">
@@ -693,7 +712,7 @@
           </button>
         </div>
 
-        <!-- State B-0: Teacher has not configured student PIN -->
+        <!-- State B-0: School/Teacher has not configured student PIN -->
         <div id="parent-scores-unconfigured-view" class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 text-center hidden">
           <div class="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 border border-amber-100 shadow-sm">
             <i class="fa-solid fa-lock text-2xl"></i>
@@ -702,16 +721,16 @@
             <i class="fa-solid fa-triangle-exclamation"></i>
             <span>座號 <span class="parent-unconfigured-seat-num">--</span> 號 成績系統尚未開通</span>
           </div>
-          <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">導師尚未設定專屬驗證碼</h2>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">學校尚未開通成績認證碼</h2>
           <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-2 mb-6 leading-relaxed">
-            為維護學生個人成績隱私，系統要求必須由班級導師在後台設定開通該座號的專屬 6 位數 PIN 碼後，方可解鎖使用成績系統。
+            為維護學生個人成績隱私，系統要求由學校端統一派發或由班級導師開通該座號之成績認證碼 (PIN) 後，方可查閱學生成績分析。
           </p>
           <div class="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-amber-900 text-xs sm:text-sm max-w-md mx-auto text-left space-y-2">
             <div class="font-extrabold flex items-center gap-1.5 text-amber-800">
               <i class="fa-solid fa-circle-info"></i> 如何開通？
             </div>
             <p class="leading-relaxed">
-              請聯繫班級導師至教師端<strong>「成績系統 PIN 碼管理」</strong>為該學生設定或一鍵開通 6 位數專屬密碼。開通後您即可在此輸入 PIN 碼查閱成績。
+              請聯繫班級導師或學校教務處確認是否已完成該座號成績認證碼派發。開通後即可在此輸入專屬 PIN 碼查閱成績。
             </p>
           </div>
           <div class="mt-6">
@@ -732,7 +751,7 @@
           </div>
           <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">輸入專屬 PIN 碼解鎖成績</h2>
           <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-2 mb-6 leading-relaxed">
-            為維護學生在校成績與個人隱私，請輸入專屬密碼（預設為 <strong>班級代碼 + 座號</strong>，家長與學生共用相同 PIN 碼）。
+            為維護學生在校成績與個人隱私，請輸入學校派發或導師提供之專屬成績認證碼 (PIN)。
           </p>
 
           <form id="parent-scores-pin-form" class="max-w-xs mx-auto space-y-4">
@@ -1011,6 +1030,9 @@
           <div id="contact-book-container" class="rounded-2xl bg-slate-50/80 border border-slate-200/70 p-4 sm:p-6 transition-all min-h-[140px] flex flex-col justify-center">
             <!-- Content or Empty state will render here -->
           </div>
+
+          <!-- School Admin Electronic Inspection Stamp -->
+          <div id="contact-book-inspection-stamp" class="hidden mt-4"></div>
         </section>
 
         <!-- 家長每日電子簽閱區塊 (Daily Parent E-Signature) -->
@@ -1053,7 +1075,7 @@
                 <input 
                   type="password" 
                   id="parent-sign-pin-input" 
-                  placeholder="請輸入密碼（預設為班級代碼+座號）" 
+                  placeholder="請輸入學校派發或導師提供之專屬 PIN 碼" 
                   class="w-full py-2.5 px-3.5 rounded-xl border border-slate-300 text-sm font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 />
               </div>
@@ -2163,6 +2185,7 @@
       }
 
       setupEventListeners();
+      listenToSystemBroadcasts();
 
       if (!ENABLE_SCORES_FEATURE) {
         elements.parentTabScoresBtn?.classList.add("hidden");
@@ -2171,6 +2194,93 @@
         elements.studentScoresSection?.classList.add("hidden");
         const divider = document.getElementById("hw-scores-relock-divider");
         if (divider) divider.classList.add("hidden");
+      }
+    }
+
+    function listenToSystemBroadcasts() {
+      try {
+        const bcRef = doc(db, 'artifacts', APP_COLLECTION_ID, 'public', 'data', 'systemBroadcasts', 'main');
+        onSnapshot(bcRef, (docSnap) => {
+          if (!docSnap.exists()) {
+            renderParentBroadcastBanner(null);
+            return;
+          }
+          const data = docSnap.data();
+          if (data && data.active !== false && data.current && data.current.message) {
+            renderParentBroadcastBanner(data.current);
+          } else if (data && data.latest && data.latest.active !== false && data.latest.message) {
+            renderParentBroadcastBanner(data.latest);
+          } else {
+            renderParentBroadcastBanner(null);
+          }
+        }, (err) => {
+          console.warn("Parent broadcast snapshot error:", err);
+        });
+      } catch (e) {
+        console.warn("Init parent broadcast error:", e);
+      }
+    }
+
+    function renderParentBroadcastBanner(bc) {
+      const banner = document.getElementById("parent-broadcast-banner");
+      if (!banner) return;
+      if (!bc) {
+        banner.classList.add("hidden");
+        return;
+      }
+      if (bc.id && sessionStorage.getItem("dismissed_bc_" + bc.id) === "true") {
+        banner.classList.add("hidden");
+        return;
+      }
+
+      const isEmergency = bc.level === "danger" || bc.level === "emergency";
+      const isWarning = bc.level === "warning";
+
+      banner.className = `rounded-2xl p-3.5 sm:p-4 border shadow-sm transition-all animate-fade-in flex items-center justify-between gap-3 ${
+        isEmergency ? 'bg-rose-50 border-rose-200 text-rose-900' :
+        isWarning ? 'bg-amber-50 border-amber-200 text-amber-900' :
+        'bg-indigo-50 border-indigo-200 text-indigo-900'
+      }`;
+
+      const iconBox = document.getElementById("parent-broadcast-icon-box");
+      const icon = document.getElementById("parent-broadcast-icon");
+      const badge = document.getElementById("parent-broadcast-badge");
+      const time = document.getElementById("parent-broadcast-time");
+      const content = document.getElementById("parent-broadcast-content");
+
+      if (iconBox) {
+        iconBox.className = `w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-base shadow-xs ${
+          isEmergency ? 'bg-rose-100 text-rose-600' :
+          isWarning ? 'bg-amber-100 text-amber-600' :
+          'bg-indigo-100 text-indigo-600'
+        }`;
+      }
+      if (icon) {
+        icon.className = isEmergency ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-bullhorn';
+      }
+      if (badge) {
+        badge.className = `px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+          isEmergency ? 'bg-rose-200/80 text-rose-800' :
+          isWarning ? 'bg-amber-200/80 text-amber-800' :
+          'bg-indigo-200/80 text-indigo-800'
+        }`;
+        badge.textContent = bc.title ? escapeHtml(bc.title) : '校園安全即時通報';
+      }
+      if (time) {
+        time.textContent = (bc.createdAt || '').slice(0, 16).replace('T', ' ');
+      }
+      if (content) {
+        content.textContent = bc.message || bc.content || '';
+      }
+
+      banner.classList.remove("hidden");
+
+      const closeBtn = document.getElementById("parent-broadcast-close-btn");
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          banner.classList.add("hidden");
+          if (bc.id) sessionStorage.setItem("dismissed_bc_" + bc.id, "true");
+        };
       }
     }
 
@@ -2269,11 +2379,14 @@
 
       state.accessCode = cleanCode;
 
-      // Step 1: Check fast local cache to instantly display dashboard on mobile (0ms perceived latency)
+      // Step 1: Check fast local cache to instantly display dashboard on mobile (0ms perceived latency, 3-min TTL)
       try {
         const cachedRaw = localStorage.getItem(LS_CLASS_CACHE_PREFIX + cleanCode);
+        const cachedTimeRaw = localStorage.getItem(LS_CLASS_CACHE_PREFIX + cleanCode + "_time");
         if (cachedRaw) {
           const cachedData = JSON.parse(cachedRaw);
+          const cachedTime = cachedTimeRaw ? parseInt(cachedTimeRaw, 10) : 0;
+          const isFresh = (Date.now() - cachedTime) < (3 * 60 * 1000);
           if (cachedData && cachedData.className) {
             state.classData = cachedData;
             showDashboardView();
@@ -2310,6 +2423,7 @@
               localStorage.setItem(LS_ACCESS_CODE_KEY, cleanCode);
               try {
                 localStorage.setItem(LS_CLASS_CACHE_PREFIX + cleanCode, JSON.stringify(directData));
+                localStorage.setItem(LS_CLASS_CACHE_PREFIX + cleanCode + "_time", Date.now().toString());
               } catch (e) {}
 
               // 驗證座號是否超出班級範圍
@@ -2361,6 +2475,7 @@
           localStorage.setItem(LS_ACCESS_CODE_KEY, cleanCode);
           try {
             localStorage.setItem(LS_CLASS_CACHE_PREFIX + cleanCode, JSON.stringify(data));
+            localStorage.setItem(LS_CLASS_CACHE_PREFIX + cleanCode + "_time", Date.now().toString());
           } catch (e) {}
 
           const maxSeat = data.lastMaxSeat || 35;
@@ -2478,15 +2593,11 @@
     function getTeacherConfiguredPin(seat) {
       const s = String(seat || state.studentSeat || "");
       if (!s) return null;
-      const legacyPin = String(100000 + Number(s));
       const configured = state.classData?.studentPins?.[s];
-      if (configured && String(configured).trim() && String(configured).trim() !== legacyPin) {
+      if (configured && String(configured).trim()) {
         return String(configured).trim().toUpperCase();
       }
-      // 預設 PIN 碼：班級代碼 + 座號 (家長與學生共用相同 PIN 碼)
-      if (state.accessCode) {
-        return `${state.accessCode}${s}`.trim().toUpperCase();
-      }
+      // 成績認證碼由學校統一派發或教師開通，前端絕不自動預設回退
       return null;
     }
     window.getTeacherConfiguredPin = getTeacherConfiguredPin;
@@ -4297,7 +4408,7 @@
 
         if (!teacherPin) {
           if (errorBox) errorBox.classList.remove("hidden");
-          if (errorMsg) errorMsg.textContent = "請確認學生座號與班級代碼！";
+          if (errorMsg) errorMsg.textContent = "此座號學校尚未開通成績認證碼，請洽詢班級導師或教務處！";
           return;
         }
 
@@ -4310,7 +4421,7 @@
           renderParentScoresSection();
         } else {
           if (errorBox) errorBox.classList.remove("hidden");
-          if (errorMsg) errorMsg.textContent = "PIN 碼不正確！預設為【班級代碼 + 座號】（家長與學生共用相同密碼）。若有疑問請向導師確認。";
+          if (errorMsg) errorMsg.textContent = "成績認證碼不正確！請確認學校派發或導師提供之專屬 PIN 碼，或洽詢班級導師協助查詢或重設。";
           if (inputEl) {
             inputEl.focus();
             inputEl.select();
@@ -4327,7 +4438,7 @@
           renderParentScoresSection();
         } else {
           if (errorBox) errorBox.classList.remove("hidden");
-          if (errorMsg) errorMsg.textContent = "驗證失敗，請檢查網路連線或向導師確認 PIN 碼！";
+          if (errorMsg) errorMsg.textContent = "成績認證碼不正確或網路異常，請洽詢班級導師協助查詢或重設。";
         }
       } finally {
         if (submitBtn) submitBtn.disabled = false;
@@ -4447,6 +4558,54 @@
             `).join('')}
           </ol>
         `;
+      }
+
+      // 渲染學校行政線上抽查核章
+      const stampContainer = document.getElementById('contact-book-inspection-stamp');
+      if (stampContainer) {
+        let auditRecord = null;
+        if (data.latestInspection) {
+          auditRecord = {
+            deptName: data.latestInspection.deptName || '查訖',
+            inspector: data.latestInspection.inspector || '行政主管',
+            comment: data.latestInspection.comment || '查核詳實，准予備查。',
+            timestamp: (data.latestInspection.stampedAt || '').slice(0, 16).replace('T', ' ')
+          };
+        } else if (Array.isArray(data.inspectionStamps) && data.inspectionStamps.length > 0) {
+          const first = data.inspectionStamps[0];
+          auditRecord = {
+            deptName: first.deptName || '查訖',
+            inspector: first.inspector || '行政主管',
+            comment: first.comment || '查核詳實，准予備查。',
+            timestamp: (first.stampedAt || '').slice(0, 16).replace('T', ' ')
+          };
+        }
+
+        if (auditRecord) {
+          stampContainer.classList.remove('hidden');
+          stampContainer.innerHTML = `
+            <div class="border-2 border-rose-500 bg-rose-50/95 backdrop-blur-sm rounded-2xl p-3 flex items-start gap-3 shadow-md max-w-sm ml-auto animate-fade-in">
+              <div class="w-13 h-13 rounded-full border-2 border-rose-600 flex flex-col items-center justify-center font-black text-rose-600 shrink-0 rotate-[-10deg] shadow-xs bg-white">
+                <span class="text-[8px] tracking-wider leading-none">學校行政</span>
+                <span class="text-[10px] font-black leading-tight my-0.5 border-y border-rose-600/40 px-1">${escapeHtml(auditRecord.deptName || '查訖')}</span>
+                <span class="text-[7px] scale-90 leading-none font-mono">${(auditRecord.timestamp || '').slice(0, 10)}</span>
+              </div>
+              <div class="flex-1 text-left">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-xs text-rose-800">學校行政線上抽查核章</span>
+                  <span class="text-[10px] text-rose-400 font-mono">${auditRecord.timestamp || ''}</span>
+                </div>
+                <div class="text-[11px] text-slate-500 font-bold mt-0.5">核章主管：${escapeHtml(auditRecord.inspector || '行政主管')}</div>
+                <p class="text-xs text-slate-800 font-bold mt-1 leading-snug">
+                  「${escapeHtml(auditRecord.comment || '查核詳實，准予備查。')}」
+                </p>
+              </div>
+            </div>
+          `;
+        } else {
+          stampContainer.classList.add('hidden');
+          stampContainer.innerHTML = '';
+        }
       }
 
       // 渲染每日聯絡簿家長電子簽閱區塊
